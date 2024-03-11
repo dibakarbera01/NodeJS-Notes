@@ -1,4 +1,4 @@
-// console.log('Scalar course')
+console.log('Scalar course')
 
 // function sayHello(){
 //     console.log('Hello World')
