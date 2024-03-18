@@ -17,6 +17,9 @@ function processOrder(order) {
     })
 }
 
+
+// promise channing method
+
 // placeOrder('coffee').then(function(orderPlaced){
 //     console.log(orderPlaced)
 //     let orderIsProcessed = processOrder(orderPlaced)
