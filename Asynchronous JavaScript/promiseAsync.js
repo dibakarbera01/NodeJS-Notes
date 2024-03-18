@@ -1,17 +1,17 @@
-function placeOrder(drink){
-    return new Promise(function(resolve,reject){
-        if(drink==='coffee'){
+function placeOrder(drink) {
+    return new Promise(function (resolve, reject) {
+        if (drink === 'coffee') {
             resolve('order for coffee received')
         }
-        else{
+        else {
             reject('other coffe reject')
         }
     })
 }
 
 
-function processOrder(order){
-    return new Promise(function(resolve){
+function processOrder(order) {
+    return new Promise(function (resolve) {
         console.log('order is being processed')
         resolve(`${order} is served`)
     })
@@ -30,11 +30,16 @@ function processOrder(order){
 
 
 //Async Await both is keywords
-async function serverOrder(){
-    let orderPlaced = await placeOrder('coffee')
-    console.log(orderPlaced)
-    let procesedOrder = await processOrder(orderPlaced)
-    console.log(procesedOrder)
+async function serverOrder() {
+    try {
+        let orderPlaced = await placeOrder('coffee')
+        console.log(orderPlaced)
+        let procesedOrder = await processOrder(orderPlaced)
+        console.log(procesedOrder)
+    } catch (err) {
+        console.log(err)
+    }
+
 }
 
 serverOrder()
