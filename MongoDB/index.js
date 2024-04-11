@@ -5,11 +5,13 @@ mongoose.connect('mongodb://127.0.0.1/testDatabase').then(() => console.log("con
 //Schema
 
 const courseSchema = new mongoose.Schema({
-    name: String,
-    creator: String,
+    name: {type:String, required:true},
+    creator: {type:String, required:true},
     publishedDate: { type: Date, default: Date.now },
-    isPublished: Boolean,
-    rating: Number
+    isPublished: {type:String,required:true},
+    rating: {type:Number,required:function(){
+        return this.isPublished
+    }}
 })
 
 
@@ -17,17 +19,22 @@ const Course = mongoose.model('Course', courseSchema)
 
 async function createCourse() {
     const course = new Course({
-        name: "Ruby",
+        name: "MongoDB",
         creator: "Adam",
-        ispublished: true,
-        rating: 0
+        ispublished: true
+        // rating: 0
     })
-
-    const result = await course.save()
-    console.log(result)
+    try {
+        await course.validate()
+        // const result = await course.save()
+        // console.log(result)
+    } catch (error) {
+        console.error(error.message)
+    }
+    
 } //create data
 
-// createCourse()
+createCourse()
 
 
 
@@ -90,4 +97,4 @@ async function deleteCourse(id){
     console.log(course)
 } // delete data
 
-deleteCourse('66184101d0ce06447a5c9c49')
+// deleteCourse('66184101d0ce06447a5c9c49')
