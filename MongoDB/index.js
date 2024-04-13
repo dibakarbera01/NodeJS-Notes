@@ -5,13 +5,25 @@ mongoose.connect('mongodb://127.0.0.1/testDatabase').then(() => console.log("con
 //Schema
 
 const courseSchema = new mongoose.Schema({
-    name: {type:String, required:true},
-    creator: {type:String, required:true},
+    name: { type: String, required: true, minlength: 5, maxlength: 200 },  //course
+    tags: {type:Array, validate:{
+        validator:function(tags){
+            return tags.length > 1
+        }
+    }},                                               //tags
+    category: {
+        type: String,
+        required: true,
+        enum: ['DSA', 'Web', 'Mobile', 'Data Science']
+    },
+    creator: { type: String, required: true },
     publishedDate: { type: Date, default: Date.now },
-    isPublished: {type:String,required:true},
-    rating: {type:Number,required:function(){
-        return this.isPublished
-    }}
+    isPublished: { type: Boolean, required: true },
+    rating: {
+        type: Number, required: function () {
+            return this.isPublished
+        }
+    }
 })
 
 
@@ -20,18 +32,23 @@ const Course = mongoose.model('Course', courseSchema)
 async function createCourse() {
     const course = new Course({
         name: "MongoDB",
+        tags: ['express', 'mongodb'],
+        category: 'Web',
         creator: "Adam",
-        ispublished: true
-        // rating: 0
+        isPublished: true,
+        rating: 4.5
     })
     try {
-        await course.validate()
-        // const result = await course.save()
-        // console.log(result)
+        // await course.validate()
+        const result = await course.save()
+        console.log(result)
     } catch (error) {
-        console.error(error.message)
+        // console.error(error.message)
+        for (field in error.errors){
+            console.log(error.errors[field])
+        }
     }
-    
+
 } //create data
 
 createCourse()
@@ -61,7 +78,7 @@ async function getCourses() {
 
     // const courses = await Course.find({ rating: {$in:[4.5,4.3, 4.2]} }).select({ name: 1, publishedDate: 1 }).or([{creator:"Dibakar"},{rating:2}])
 
-    const courses = await Course.find({ rating: {$in:[4.5,4.3, 4.2]} }).select({ name: 1, publishedDate: 1 }).and([{creator:"Dibakar"},{rating:4.5}],)
+    const courses = await Course.find({ rating: { $in: [4.5, 4.3, 4.2] } }).select({ name: 1, publishedDate: 1 }).and([{ creator: "Dibakar" }, { rating: 4.5 }],)
 
 
 
@@ -73,15 +90,15 @@ async function getCourses() {
 
 
 
-async function updateCourse(id){
+async function updateCourse(id) {
 
     let course = await Course.findById(id)
-    if(!course) return;
+    if (!course) return;
 
-    course.name= "HTML"
-    course.creator="Steve"
+    course.name = "HTML"
+    course.creator = "Steve"
 
-    const updateCourse=await course.save()
+    const updateCourse = await course.save()
 
     console.log(updateCourse)
 } //update data
@@ -91,7 +108,7 @@ async function updateCourse(id){
 
 
 //deleting
-async function deleteCourse(id){
+async function deleteCourse(id) {
     let course = await Course.findByIdAndDelete(id)
 
     console.log(course)
